@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="li3-plugins-qa" default="unit-tests" basedir=".">
+	<!-- ============================================ -->
+	<!-- Config                                       -->
+	<!-- ============================================ -->
+	<property name="git.binary" value="git" />
+	<property name="li3.dir" value="app" />
+	<property name="li3.php" value="../libraries/lithium/console/lithium.php" />
+	
+	<property name="li3-core" value ="li3_docs,li3_qa,lithium" />
+	<property name="li3-plugins" value="filesystem,fixtures,mockery,partials" />
+	
+	<taskdef name="li3" classname="Li3Task" classpath="builder/tasks" />
+	<!-- ============================================ -->
+	<!-- Main targets                                 -->
+	<!-- ============================================ -->
+	
+	<target name="tests" depends="unit-tests">
+	</target>
+	
+	<target name="unit-tests" depends="init">
+		<property name="test.unit.fail" value="false"/>
+		
+		<foreach list="${li3-plugins}" param="name" target="-unit-test-plugin" />
+		<if><isset property="test.core"/>
+			<then>
+				<foreach list="${li3-core}" param="name" target="-unit-test-core" />
+			</then>
+		</if>
+
+		<if><isfalse value="${test.unit.fail}"/>
+			<then>
+				<fail msg="some of the unit tests failed." />
+			</then>
+		</if>
+
+		</target>
+	
+	<target name="init" depends="-init" unless="project.initialised">
+		<property name="project.initialised" value="true" />
+	</target>
+	
+
+	<!-- ============================================ -->
+	<!-- Utility targets                                 -->
+	<!-- ============================================ -->
+	
+	<target name="-init" depends="-load-3rd-party" unless="project.initialised">
+		<property name="project.initialised" value="true" />
+	</target>
+	
+	<target name="-load-3rd-party" if="fresh">
+		<!-- do not use depend, the targets must be conditionally called -->
+		<phingcall target="git-submodules" />
+		<phingcall target="composer-update" />
+	</target>
+	
+	<target name="-unit-test-core">
+		<echo msg="Running tests for ${name}" />
+		<li3 li3php="${li3.php}" command="test ${name}/tests/cases" dir="${li3.dir}"
+			logoutput="true" returnProperty="li3.result" checkreturn="false" />
+		<if><isfalse value="${li3.result}"/>
+			<then>
+				<property name="test.unit.fail" value="true" override="true"/>
+			</then>
+		</if>
+	</target>
+
+	<target name="-unit-test-plugin">
+		<echo msg="Running tests for ${name}" />
+		<li3 li3php="${li3.php}" command="test li3_${name}/tests/cases" dir="${li3.dir}"
+			logoutput="true" returnProperty="li3.result" checkreturn="false" />
+		<if><isfalse value="${li3.result}"/>
+			<then>
+				<property name="test.unit.fail" value="true" override="true"/>
+			</then>
+		</if>
+	</target>
+
+	
+	<!-- ============================================ -->
+	<!-- Tasks targets                                -->
+	<!-- ============================================ -->
+	
+	<target name="composer-update" if="composer">
+		<exec command="php composer.phar update --recursive" checkreturn="true" />
+	</target>
+	
+	<!-- missing git commands -->
+	<target name="git-submodule-init">
+		<exec command="${git.binary} submodule init --recursive" checkreturn="true"/>
+	</target>
+	
+	<target name="git-submodule-update">
+		<exec command="${git.binary} submodule update" checkreturn="true"/>
+	</target>
+	
+	<target name="git-submodules" description="Init and update git submodules"
+		depends="git-submodule-init, git-submodule-update"/>
+
+</project>
