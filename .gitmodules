@@ -1,3 +1,21 @@
 [submodule "libraries/lithium"]
 	path = libraries/lithium
 	url = git://github.com/UnionOfRAD/lithium.git
+[submodule "libraries/li3_fixtures"]
+	path = libraries/li3_fixtures
+	url = https://github.com/hans-d/li3_fixtures.git
+[submodule "libraries/li3_filesystem"]
+	path = libraries/li3_filesystem
+	url = https://github.com/hans-d/li3_filesystem.git
+[submodule "libraries/li3_mockery"]
+	path = libraries/li3_mockery
+	url = https://github.com/hans-d/li3_mockery.git
+[submodule "libraries/li3_partials"]
+	path = libraries/li3_partials
+	url = https://github.com/hans-d/li3_partials.git
+[submodule "libraries/li3_qa"]
+	path = libraries/li3_qa
+	url = https://github.com/UnionOfRAD/li3_qa.git
+[submodule "libraries/li3_docs"]
+	path = libraries/li3_docs
+	url = https://github.com/UnionOfRAD/li3_docs.git
