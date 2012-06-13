@@ -20,7 +20,7 @@
 	</target>
 	
 	<target name="unit-tests" depends="init">
-		<property name="test.unit.fail" value="false"/>
+		<property name="test.unit.fail" value="false" />
 		
 		<foreach list="${li3-plugins}" param="name" target="-unit-test-plugin" />
 		<if><isset property="test.core"/>
@@ -29,7 +29,7 @@
 			</then>
 		</if>
 
-		<if><isfalse value="${test.unit.fail}"/>
+		<if><isfalse value="${test.unit.fail}" />
 			<then>
 				<fail msg="some of the unit tests failed." />
 			</then>
@@ -87,16 +87,8 @@
 		<exec command="php composer.phar update --recursive" checkreturn="true" />
 	</target>
 	
-	<!-- missing git commands -->
-	<target name="git-submodule-init">
-		<exec command="${git.binary} submodule init --recursive" checkreturn="true"/>
+	<target name="git-submodules" description="Init and update git submodules">
+		<exec command="${git.binary} submodule update --init --recursive" checkreturn="true" />
 	</target>
-	
-	<target name="git-submodule-update">
-		<exec command="${git.binary} submodule update" checkreturn="true"/>
-	</target>
-	
-	<target name="git-submodules" description="Init and update git submodules"
-		depends="git-submodule-init, git-submodule-update"/>
 
 </project>
